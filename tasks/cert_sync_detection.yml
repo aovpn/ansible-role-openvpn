@@ -14,11 +14,23 @@
   set_fact:
     openvpn_existing_client: "{{ openvpn_existing_cert.files | map(attribute='path') | map('basename') | map('replace', '.csr', '') | sort }}"
   when: (openvpn_existing_cert.files | length) > 0
+  
+# Generate a list of all clients
+- name: "[cert sync] Create list of all clients"
+  set_fact:
+    all_clients: []
+
+- name: "[cert sync] Create list of all clients"
+  set_fact:
+    all_clients: "{{ all_clients + [item.1] }}"
+  with_subelements:
+        - "{{ clients }}"
+        - client
 
 # Make difference between 2 list to have only cert to revoke
 - name: "[cert sync] Create list of cert to revoke"
   set_fact:
-    openvpn_cert_sync_revoke: "{{ (openvpn_existing_client | default([])) | difference(clients | sort ) }}"
+    openvpn_cert_sync_revoke: "{{ (openvpn_existing_client | default([])) | difference(all_clients | sort ) }}"
 
 - name: "[cert sync] Debug: Certs to revoke (skipped if none)"
   debug:

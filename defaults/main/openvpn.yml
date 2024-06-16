@@ -40,6 +40,7 @@ openvpn_ifconfig_pool_persist_file: ipp.txt
 openvpn_management_bind: /var/run/openvpn/management unix
 openvpn_management_client_user: root
 openvpn_push: []
+openvpn_custom_config: []
 openvpn_service_group: nogroup
 openvpn_service_user: nobody
 openvpn_status_version: 1
