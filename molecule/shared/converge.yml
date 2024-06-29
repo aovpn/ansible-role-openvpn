@@ -1,0 +1,9 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Run aovpn.openvpn
+      ansible.builtin.include_role:
+        name: aovpn.openvpn

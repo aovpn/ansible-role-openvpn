@@ -1,9 +1,9 @@
 ---
 galaxy_info:
   role_name: openvpn
-  namespace: kyl191
-  author: Kyle Lexmond
-  description: OpenVPN playbook for CentOS/Fedora/RHEL/RHEL clones & Ubuntu/Debian
+  namespace: aovpn
+  author: AOVPN Team
+  description: Ansible role to install and configure openvpn.
 
   license: MIT
   min_ansible_version: "2.9"
@@ -20,8 +20,10 @@ galaxy_info:
         - "34"
     - name: Ubuntu
       versions:
-        - trusty
+        - focal
+        - yammy
   galaxy_tags:
     - networking
+    - openvpn
 
 dependencies: []
