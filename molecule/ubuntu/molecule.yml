@@ -1,0 +1,26 @@
+---
+dependency:
+  name: galaxy
+  enabled: true
+  options:
+    role-file: molecule/shared/requirements.yml
+    requirements-file: molecule/shared/collections.yml
+driver:
+  name: docker
+lint: |
+  ansible-lint
+platforms:
+  - name: ubuntu2404
+    image: geerlingguy/docker-ubuntu2404-ansible
+    privileged: true
+    pre_build_image: true
+    command: ""
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+provisioner:
+  name: ansible
+  playbooks:
+    converge: ../shared/converge.yml
+    prepare: ../shared/prepare.yml
+verifier:
+  name: ansible
