@@ -21,7 +21,7 @@ galaxy_info:
     - name: Ubuntu
       versions:
         - focal
-        - yammy
+        - jammy
   galaxy_tags:
     - networking
     - openvpn

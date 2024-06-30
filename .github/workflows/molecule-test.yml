@@ -15,8 +15,8 @@ jobs:
       fail-fast: false
       matrix:
         scenario:
-          - centos
           - ubuntu
+          - centos
     steps:
       - name: Checkout
         uses: actions/checkout@v2
