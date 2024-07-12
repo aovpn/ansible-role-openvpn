@@ -1,7 +1,5 @@
 OpenVPN
 =========
-This role installs OpenVPN from default repositories, configures it as a server, sets up networking and firewalls (primarily firewalld, ufw and iptables are the best effort), and generates configuration files for clients. Optionally, can configure LDAP authentication.
-
 This role installs OpenVPN from default repositories, configures it as a server, sets up networking and firewalls (primarily firewalld, ufw and iptables - best effort), and generates client configuration files. It also optionally supports LDAP authentication.
 
 Supported Operating Systems (CI Build):
