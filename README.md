@@ -1,47 +1,39 @@
 OpenVPN
 =========
-Github Actions (PRs & mainline): ![Github CI](https://github.com/kyl191/ansible-role-openvpn/workflows/CI/badge.svg)
+This role installs OpenVPN from default repositories, configures it as a server, sets up networking and firewalls (primarily firewalld, ufw and iptables - best effort), and generates client configuration files. It also optionally supports LDAP authentication.
 
-Travis CI (Actually launching openvpn): [![Build Status](https://travis-ci.org/kyl191/ansible-role-openvpn.svg?branch=master)](https://travis-ci.org/kyl191/ansible-role-openvpn)
-
-This role installs OpenVPN, configures it as a server, sets up networking and firewalls (primarily firewalld, ufw and iptables are best effort), and can optionally create client certificates.
-
-OSes in CI build:
-- Fedora 32+
-- CentOS 7 & 8
-
-Note: I am providing code in the repository to you under an open source license. Because this is my personal repository, the license you receive to my code is from me and not my employer.
+Supported Operating Systems (CI Build):
+- Ubuntu 24.04
+- CentOS 8
 
 # Requirements
-OpenVPN must be available as a package in yum/dnf/apt! For CentOS users, this role will run `yum install epel-release` to ensure openvpn is available.
+OpenVPN must be available as a package in yum/dnf/apt! For CentOS users, this role will run `yum install epel-release` to ensure OpenVPN is available.
 
-Ubuntu precise has a [weird bug](https://bugs.launchpad.net/ubuntu/+source/iptables-persistent/+bug/1002078) that might make the iptables-persistent install fail. There is a [workaround](https://forum.linode.com/viewtopic.php?p=58233#p58233).
+Ubuntu Precise has a [weird bug](https://bugs.launchpad.net/ubuntu/+source/iptables-persistent/+bug/1002078) that might cause the `iptables-persistent` installation to fail. There is a [workaround](https://forum.linode.com/viewtopic.php?p=58233#p58233).
 
-## Ansible 2.10 and higher
-With the release of Ansible 2.10, modules have been moved into collections. With the exception of ansible.builtin modules, this means additonal collections must be installed in order to use modules such as seboolean (now ansible.posix.seboolean). This collections is now required: `ansible.posix` and this collection is required if using ufw: `community.general`. Installing the collections:
+## Ansible Core 2.10 and Higher
+With Ansible 2.10, modules have been moved into collections. Aside from Ansible's built-in modules, additional collections are required for certain module like seboolean (now ansible.posix.seboolean). The required collections are:
 
-```
+- ansible.posix
+- community.general (if using ufw)
+
+Installation:
+```bash
 ansible-galaxy collection install ansible.posix
 ansible-galaxy collection install community.general
 ```
+If you're using a standard Ansible distribution, you won't need to install any additional collections.
 
 # Support Notes/Expectations
-I personally use this role to manage OpenVPN on CentOS 8. I try to keep the role on that platform fully functional with the default config.
-Please recognise that I am a single person, and I have a full time job and other commitments.
-
-Responses to any issues will be on a best effort basis on my part, including the possibility that I don't respond at all.
-Issues arising from use of the non-defaults (including any of the major community contributions) will be deprioritized.
-
-Major community contributions:
-* Functionality to revoke certs
-* All of the LDAP support
+This role is supported by a group of enthusiasts on a best-effort basis. Feel free to open an issue and contribute a related pull request with a fix.
 
 # Role Variables
 ## Role options
 These options change how the role works. This is a catch-all group, specific groups are broken out below.
+
 | Variable                     | Type    | Choices     | Default           | Comment                                                                       |
 |------------------------------|---------|-------------|-------------------|-------------------------------------------------------------------------------|
-| clients                      | list    |             | []                | List of clients to add to OpenVPN                                             |
+| clients                      | list    |             | []                | List of clients (kinda users) to add to OpenVPN                               |
 | openvpn_base_dir             | string  |             | /etc/openvpn      | Path where your OpenVPN config will be stored                                 |
 | openvpn_client_config_no_log | boolean | true, false | true              | Prevent client configuration files to be logged to stdout by Ansible          |
 | openvpn_key_dir              | string  |             | /etc/openvpn/keys | Path where your server private keys and CA will be stored                     |
@@ -52,8 +44,10 @@ These options change how the role works. This is a catch-all group, specific gro
 | openvpn_sync_certs           | boolean | true, false | false             | Revoke certificates not explicitly defined in 'clients'                       |
 | openvpn_uninstall            | boolean | true, false | false             | Set to true to uninstall the OpenVPN service                                  |
 | openvpn_use_ldap             | boolean | true, false | false             | Active LDAP backend for authentication. Client certificate not needed anymore |
+
 ### Config fetching
 Change these options if you need to adjust how the configs are download to your local system
+
 | Variable                            | Type    | Choices     | Default      | Comment                                                                                                                                   |
 |-------------------------------------|---------|-------------|--------------|-------------------------------------------------------------------------------------------------------------------------------------------|
 | openvpn_fetch_client_configs        | boolean | true, false | true         | Download generated client configurations to the local system                                                                              |
@@ -62,6 +56,7 @@ Change these options if you need to adjust how the configs are download to your 
 
 ### Firewall
 Change these options if you need to force a particular firewall or change how the playbook interacts with the firewall.
+
 | Variable                         | Type    | Choices                        | Default  | Comment                                                                                                     |
 |----------------------------------|---------|--------------------------------|----------|-------------------------------------------------------------------------------------------------------------|
 | firewalld_default_interface_zone | string  |                                | public   | Firewalld zone where the "ansible_default_ipv4.interface" will be pushed into                               |
@@ -137,7 +132,8 @@ These options change how OpenVPN itself works.
 | openvpn_client_configs    | dict    |         | {}      | Dict of settings custom client configs               |
 
 ## Logrotate
-Set your own custom logrotate options
+Set your own custom logrotate options.
+
 | Variable                 | Type   | Choices | Default                                                                                                     | Comment                                                                                          |
 |--------------------------|--------|---------|-------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
 | openvpn_log_dir          | string |         | /var/log                                                                                                    | Set location of openvpn log files. This parameter is a part of `log-append` configuration value. |
@@ -146,6 +142,7 @@ Set your own custom logrotate options
 
 ## Packaging
 This role pulls in a bunch of different packages. Override the names as necessary.
+
 | Variable                         | Type   | Choices | Default             | Comment                                                                     |
 |----------------------------------|--------|---------|---------------------|-----------------------------------------------------------------------------|
 | epel_package_name                | string |         | epel-release        | Name of the epel-release package to install from the package manager        |
@@ -178,23 +175,44 @@ This role pulls in a bunch of different packages. Override the names as necessar
 # Dependencies
 Does not depend on any other roles
 
-# Example Playbook
-```
-- hosts: vpn
+# How to use
+## Example Playbook
+Assume you've cloned this repository into the `ansible-role-openvpn` directory. Navigate to the directory one level above this using `..`. In this parent directory, create a new playbook named `ovpn.yaml`.
+```yaml
+---
+- hosts: all
   gather_facts: true
+  become: true
   roles:
-    - role: kyl191.openvpn
+    - role: ansible-role-openvpn
       openvpn_port: 4300
       openvpn_sync_certs: true
       clients:
-        - client1
-        - client2
+        - myclient1
+        - myclient2
 ```
 
 > **Note:** As the role will need to know the remote used platform (32 or 64 bits), you must set `gather_facts` to `true` in your play.
+
+Each client listed in the playbook will have a separate configuration generated with unique certificates. Ensure you add as many clients as you have users.
+
+## Apply Playbook
+SSH key-based authentication is assumed. If using password authentication, add `-kK` to the command.
+```bash
+ansible-playbook -u USERNAME -i ip.add.re.ss, ./ovpn.yaml
+```
+Where:
+- USERNAME — replace USERNAME with your SSH username.
+- ip.add.re.ss — replace ip.add.re.ss with the IP address (or DNS name) of your OpenVPN server, followed by a comma.
+
+## Configuration files for clients
+Client configuration files are copied to the machine where you ran the ansible-playbook command. By default, you'll find them in the `/tmp/ansible` directory.
+
+## More examples
+More examples will be provided in future documentation, which will be linked here. Stay tuned!
 
 # License
 MIT
 
 # Author Information
-Written by Kyle Lexmond
+Initially written by Kyle Lexmond
