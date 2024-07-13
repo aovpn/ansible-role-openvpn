@@ -22,12 +22,23 @@
     state: restarted
 
 - name: Save iptables rules (Debian/Ubuntu and CentOS/RHEL/Fedora)
-  ansible.builtin.shell: "{{ iptables_save_command }}"  # noqa command-instead-of-shell
+  ansible.builtin.shell:
+    cmd: "{{ iptables_save_command }}"  # noqa command-instead-of-shell
+  register: openvpn_iptables_save
+  changed_when:
+    - openvpn_iptables_save.rc == 0
+  failed_when:
+    - openvpn_iptables_save.rc != 0
   when: ansible_os_family == 'Debian' or ansible_os_family == 'RedHat'
   listen: "save iptables"
 
 - name: Build and install policy
   ansible.builtin.command: "{{ item }}"
+  register: openvpn_install_policy
+  changed_when:
+    - openvpn_install_policy.rc == 0
+  failed_when:
+    - openvpn_install_policy.rc != 0
   args:
     chdir: /var/lib/selinux
   with_items:
