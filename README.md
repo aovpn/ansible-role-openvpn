@@ -211,6 +211,14 @@ Client configuration files are copied to the machine where you ran the ansible-p
 ## More examples
 More examples will be provided in future documentation, which will be linked here. Stay tuned!
 
+# Contributing
+
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+Check out our [contributing guide](CONTRIBUTING.md) to get started.
+
+Don't forget to give the project a star! Thanks again!
+
 # License
 MIT
 
