@@ -36,6 +36,12 @@
   register: fedora_dnf
   changed_when: '"Nothing to do." not in fedora_dnf.stdout'
 
+- name: Update repositories for Debian/Ubuntu
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+  when: ansible_distribution == "Debian" or ansible_distribution=="Ubuntu"
+
 - name: Install openvpn
   ansible.builtin.package:
     name: "{{ item }}"
