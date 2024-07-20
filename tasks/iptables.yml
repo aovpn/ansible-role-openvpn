@@ -81,7 +81,7 @@
     - openvpn_iptables_existing_save.rc == 0
   failed_when:
     - openvpn_iptables_existing_save.rc != 0
-  when: __iptables_installed.changed | bool
+  when: __iptables_installed.changed | bool # noqa no-handler
 
 - name: Enable iptables
   ansible.builtin.service:

@@ -9,7 +9,23 @@ on:
       - main
 
 jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          path: "${{ github.repository }}"
+      - name: Run ansible lint
+        uses: ansible/ansible-lint-action@v6.17.0
+        with:
+          path: "."
+
+
   molecule:
+    needs:
+      - lint
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
