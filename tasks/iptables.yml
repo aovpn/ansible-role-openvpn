@@ -3,14 +3,12 @@
   ansible.builtin.package:
     name: "{{ iptables_persistent_package_name }}"
     state: present
-  register: __iptables_installed
   when: ansible_os_family == "Debian"
 
 - name: Install iptables-services (RedHat/CentOS)
   ansible.builtin.package:
     name: "{{ iptables_services_package_name }}"
     state: present
-  register: __iptables_installed
   when: ansible_os_family == "RedHat"
 
 - name: Allow VPN forwarding - iptables
@@ -73,15 +71,6 @@
     comment: "Perform NAT readdressing"
   when: openvpn_masquerade_not_snat
   notify: "save iptables"
-
-- name: Save existing iptables rule before start iptables service
-  ansible.builtin.command: "{{ iptables_save_command }}"
-  register: openvpn_iptables_existing_save
-  changed_when:
-    - openvpn_iptables_existing_save.rc == 0
-  failed_when:
-    - openvpn_iptables_existing_save.rc != 0
-  when: __iptables_installed.changed | bool # noqa no-handler
 
 - name: Enable iptables
   ansible.builtin.service:
