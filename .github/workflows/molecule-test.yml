@@ -14,14 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
-        with:
-          path: "${{ github.repository }}"
-      - name: Run ansible lint
-        uses: ansible/ansible-lint-action@v6.17.0
-        with:
-          path: "."
+        uses: actions/checkout@v4
 
+      - name: Run ansible lint
+        uses: ansible/ansible-lint@v24.7.0
 
   molecule:
     needs:
@@ -35,7 +31,7 @@ jobs:
           - centos
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           path: "${{ github.repository }}"
 
