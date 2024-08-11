@@ -5,29 +5,22 @@
     state: present
   when: ansible_os_family == "Debian"
 
-- name: Install iptables-services (RedHat/CentOS)
-  ansible.builtin.package:
-    name: "{{ iptables_services_package_name }}"
-    state: present
-  when: ansible_os_family == "RedHat"
-
-- name: Allow VPN forwarding - iptables
+- name: Allow VPN forwarding - input - iptables
   ansible.builtin.iptables:
     chain: FORWARD
     source: "{{ openvpn_server_network }}/24"
     jump: ACCEPT
     action: insert
-    comment: "Allow VPN forwarding"
+    comment: "Allow VPN forwarding for inbound traffic"
   notify: "save iptables"
 
-- name: Allow incoming SSH connections - iptables
+- name: Allow VPN forwarding - output - iptables
   ansible.builtin.iptables:
-    chain: INPUT
-    protocol: tcp
-    destination_port: "{{ ansible_port | default(22) }}"
+    chain: FORWARD
+    destination: "{{ openvpn_server_network }}/24"
     jump: ACCEPT
     action: insert
-    comment: "Allow incoming SSH connection"
+    comment: "Allow VPN forwarding for outbound traffic"
   notify: "save iptables"
 
 - name: Allow incoming VPN connections - iptables
@@ -49,18 +42,6 @@
     comment: "Accept packets from VPN tunnel adaptor"
   notify: "save iptables"
 
-- name: Perform NAT readdressing - iptables
-  ansible.builtin.iptables:
-    table: nat
-    chain: POSTROUTING
-    source: "{{ openvpn_server_network }}/24"
-    to_source: "{{ ansible_default_ipv4.address }}"
-    jump: SNAT
-    action: insert
-    comment: "Perform NAT readdressing"
-  when: not openvpn_masquerade_not_snat
-  notify: "save iptables"
-
 - name: Perform NAT readdressing with MASQUERADE - iptables
   ansible.builtin.iptables:
     table: nat
@@ -69,11 +50,4 @@
     jump: MASQUERADE
     action: insert
     comment: "Perform NAT readdressing"
-  when: openvpn_masquerade_not_snat
   notify: "save iptables"
-
-- name: Enable iptables
-  ansible.builtin.service:
-    name: "{{ iptables_service }}"
-    enabled: true
-    state: started

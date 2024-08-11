@@ -2,9 +2,10 @@ OpenVPN
 =========
 This role installs OpenVPN from default repositories, configures it as a server, sets up networking and firewalls (primarily firewalld, ufw and iptables - best effort), and generates client configuration files. It also optionally supports LDAP authentication.
 
-Supported Operating Systems (CI Build):
-- Ubuntu 24.04
-- CentOS 8
+Supported Operating Systems:
+- Ubuntu 24.04 and higher
+- CentOS 9 and higher
+- Debian 11 and higher
 
 # Requirements
 OpenVPN must be available as a package in yum/dnf/apt! For CentOS users, this role will run `yum install epel-release` to ensure OpenVPN is available.

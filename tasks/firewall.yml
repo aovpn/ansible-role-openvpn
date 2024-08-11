@@ -25,10 +25,13 @@
     msg: "Both FirewallD and UFW are detected, firewall situation is unknown"
   when: openvpn_firewall == 'auto' and firewalld.rc == 0 and ufw.rc == 0
 
-- name: Fail on no firewall detected
-  ansible.builtin.fail:
-    msg: "No firewall detected, install one before proceeding (firewalld||ufw||iptables)"
+- name: Installing iptables due to no firewall detected
+  ansible.builtin.package:
+    name: "{{ iptables_services_package_name }}"
+    state: present
+  register: iptables_installed
   when: firewalld.rc != 0 and ufw.rc != 0 and iptables.rc != 0
+  notify: "Enable iptables"
 
 - name: Add port rules (iptables)
   ansible.builtin.include_tasks: iptables.yml
@@ -36,6 +39,8 @@
     (openvpn_firewall == 'iptables')
     or
     (openvpn_firewall == 'auto' and firewalld.rc != 0 and ufw.rc != 0 and iptables.rc == 0)
+    or
+    (iptables_installed is defined)
 
 - name: Add port rules (firewalld)
   ansible.builtin.include_tasks: firewalld.yml
