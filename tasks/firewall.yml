@@ -22,7 +22,7 @@
 
 - name: Debug firewalls
   ansible.builtin.debug:
-    msg: "Firewalld: {{firewalld.rc}}, iptables: {{iptables.rc}}, ufw: {{ufw.rc}}"
+    msg: "Firewalld: {{ firewalld.rc }}, iptables: {{ iptables.rc }}, ufw: {{ ufw.rc }}"
   tags:
     - never
     - debug
@@ -42,7 +42,7 @@
 
 - name: Echo iptables_installed
   ansible.builtin.debug:
-    msg: "{{iptables_installed}}"
+    msg: "{{ iptables_installed }}"
   tags:
     - never
     - debug
