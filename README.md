@@ -64,7 +64,6 @@ Change these options if you need to force a particular firewall or change how th
 | iptables_service                 | string  |                                | iptables | Override the iptables service name                                                                          |
 | manage_firewall_rules            | boolean | true, false                    | true     | Allow playbook to manage iptables                                                                           |
 | openvpn_firewall                 | string  | auto, firewalld, ufw, iptables | auto     | The firewall software to configure network rules. "auto" will attempt to detect it by inspecting the system |
-| openvpn_masquerade_not_snat      | boolean | true, false                    | false    | Set to true if you want to set up MASQUERADE instead of the default SNAT in iptables.                       |
 ## OpenVPN Config Options
 These options change how OpenVPN itself works.
 ### Networking

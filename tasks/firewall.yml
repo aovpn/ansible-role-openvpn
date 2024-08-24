@@ -20,6 +20,13 @@
   changed_when: false  # Never report as changed
   failed_when: false
 
+- name: Debug firewalls
+  ansible.builtin.debug:
+    msg: "Firewalld: {{firewalld.rc}}, iptables: {{iptables.rc}}, ufw: {{ufw.rc}}"
+  tags:
+    - never
+    - debug
+
 - name: Fail on both firewalld & ufw
   ansible.builtin.fail:
     msg: "Both FirewallD and UFW are detected, firewall situation is unknown"
@@ -33,6 +40,13 @@
   when: firewalld.rc != 0 and ufw.rc != 0 and iptables.rc != 0
   notify: "Enable iptables"
 
+- name: Echo iptables_installed
+  ansible.builtin.debug:
+    msg: "{{iptables_installed}}"
+  tags:
+    - never
+    - debug
+
 - name: Add port rules (iptables)
   ansible.builtin.include_tasks: iptables.yml
   when: >-
@@ -40,7 +54,7 @@
     or
     (openvpn_firewall == 'auto' and firewalld.rc != 0 and ufw.rc != 0 and iptables.rc == 0)
     or
-    (iptables_installed is defined)
+    (iptables_installed.stdout is defined)
 
 - name: Add port rules (firewalld)
   ansible.builtin.include_tasks: firewalld.yml

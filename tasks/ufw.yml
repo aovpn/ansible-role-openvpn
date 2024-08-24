@@ -30,21 +30,6 @@
     interface: tun0
     rule: allow
 
-- name: Setup nat table rules - ufw
-  ansible.builtin.blockinfile:
-    dest: /etc/ufw/before.rules
-    state: present
-    insertbefore: \*filter
-    block: |
-      # OpenVPN config
-      *nat
-      :POSTROUTING ACCEPT [0:0]
-      -A POSTROUTING -s {{ openvpn_server_network }}/24 -j SNAT --to-source {{ ansible_default_ipv4.address }}
-      COMMIT
-  when: not openvpn_masquerade_not_snat
-  notify:
-    - Restart ufw
-
 - name: Setup nat table rules with MASQUERADE - ufw
   ansible.builtin.blockinfile:
     dest: /etc/ufw/before.rules
@@ -56,6 +41,5 @@
       :POSTROUTING ACCEPT [0:0]
       -A POSTROUTING -s {{ openvpn_server_network }}/24 -j MASQUERADE
       COMMIT
-  when: openvpn_masquerade_not_snat
   notify:
     - Restart ufw

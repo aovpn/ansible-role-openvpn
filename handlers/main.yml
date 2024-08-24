@@ -22,10 +22,12 @@
     state: restarted
 
 - name: Enable iptables
-  ansible.builtin.systemd_service:
+  ansible.builtin.systemd:
     name: "{{ iptables_service }}"
     state: started
     enabled: true
+  when:
+    - ansible_distribution != "Debian"
 
 - name: Save iptables rules (Debian/Ubuntu and CentOS/RHEL)
   ansible.builtin.shell:

@@ -1,2 +1,3 @@
 ---
 iptables_save_command: /usr/sbin/netfilter-persistent save
+iptables_services_package_name: iptables
