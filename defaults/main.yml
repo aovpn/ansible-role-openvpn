@@ -29,7 +29,6 @@ firewalld_default_interface_zone: public
 iptables_service: iptables
 manage_firewall_rules: true
 openvpn_firewall: auto
-openvpn_masquerade_not_snat: false
 
 # Misc
 ci_build: false
@@ -45,7 +44,7 @@ openvpn_use_ldap: false
 ## Defaults for openvpn
 
 # Networking
-openvpn_client_register_dns: true
+openvpn_client_register_dns: false
 openvpn_client_to_client: false
 openvpn_custom_dns: []
 openvpn_dns_servers: []

@@ -8,7 +8,7 @@
 
 - name: Restart iptables
   ansible.builtin.service:
-    name: iptables
+    name: "{{ iptables_service }}"
     state: restarted
 
 - name: Restart firewalld
@@ -21,7 +21,15 @@
     name: ufw
     state: restarted
 
-- name: Save iptables rules (Debian/Ubuntu and CentOS/RHEL/Fedora)
+- name: Enable iptables
+  ansible.builtin.systemd:
+    name: "{{ iptables_service }}"
+    state: started
+    enabled: true
+  when:
+    - ansible_distribution != "Debian"
+
+- name: Save iptables rules (Debian/Ubuntu and CentOS/RHEL)
   ansible.builtin.shell:
     cmd: "{{ iptables_save_command }}"  # noqa command-instead-of-shell
   register: openvpn_iptables_save
